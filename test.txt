@@ -1,0 +1,4 @@
+Operating Systems
+Linux is an OS
+We are learning C
+OS programming is interesting
