@@ -1,25 +1,32 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Iinclude
 
-TARGET = bin/client
+OBJDIR = obj
+LIBDIR = lib
+BINDIR = bin
 
-SRC = src/main.c src/mystrfunctions.c src/myfilefunctions.c
+LIB = $(LIBDIR)/libmyutils.a
+TARGET = $(BINDIR)/client_static
 
-OBJ = obj/main.o obj/mystrfunctions.o obj/myfilefunctions.o
+LIB_OBJS = $(OBJDIR)/mystrfunctions.o $(OBJDIR)/myfilefunctions.o
+MAIN_OBJ = $(OBJDIR)/main.o
 
 all: $(TARGET)
 
-$(TARGET): $(OBJ)
-	$(CC) $(OBJ) -o $(TARGET)
+$(TARGET): $(MAIN_OBJ) $(LIB)
+	$(CC) $(MAIN_OBJ) -L$(LIBDIR) -lmyutils -o $(TARGET)
 
-obj/main.o: src/main.c
-	$(CC) $(CFLAGS) -c src/main.c -o obj/main.o
+$(LIB): $(LIB_OBJS)
+	ar rcs $(LIB) $(LIB_OBJS)
 
-obj/mystrfunctions.o: src/mystrfunctions.c
-	$(CC) $(CFLAGS) -c src/mystrfunctions.c -o obj/mystrfunctions.o
+$(OBJDIR)/mystrfunctions.o: src/mystrfunctions.c include/mystrfunctions.h
+	$(CC) $(CFLAGS) -c src/mystrfunctions.c -o $(OBJDIR)/mystrfunctions.o
 
-obj/myfilefunctions.o: src/myfilefunctions.c
-	$(CC) $(CFLAGS) -c src/myfilefunctions.c -o obj/myfilefunctions.o
+$(OBJDIR)/myfilefunctions.o: src/myfilefunctions.c include/myfilefunctions.h
+	$(CC) $(CFLAGS) -c src/myfilefunctions.c -o $(OBJDIR)/myfilefunctions.o
+
+$(OBJDIR)/main.o: src/main.c include/mystrfunctions.h include/myfilefunctions.h
+	$(CC) $(CFLAGS) -c src/main.c -o $(OBJDIR)/main.o
 
 clean:
-	rm -f $(OBJ) $(TARGET)
+	rm -f $(OBJDIR)/*.o $(LIB) $(TARGET)
