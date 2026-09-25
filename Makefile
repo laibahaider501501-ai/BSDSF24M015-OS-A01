@@ -1,16 +1,33 @@
-PICFLAGS = -fPIC
+CC = gcc
+CFLAGS = -Wall -Wextra -Iinclude
 
-SHARED_LIB = lib/libmyutils.so
-DYNAMIC_TARGET = bin/client_dynamic
+TARGET = bin/client
 
-$(SHARED_LIB): obj/mystrfunctions.o obj/myfilefunctions.o
-	gcc -shared -o $(SHARED_LIB) obj/mystrfunctions.o obj/myfilefunctions.o
+OBJ = obj/main.o obj/mystrfunctions.o obj/myfilefunctions.o
+
+PREFIX = /usr/local
+BINDIR = $(PREFIX)/bin
+MANDIR = $(PREFIX)/share/man/man3
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ)
+	$(CC) $(OBJ) -o $(TARGET)
+
+obj/main.o: src/main.c
+	$(CC) $(CFLAGS) -c src/main.c -o obj/main.o
 
 obj/mystrfunctions.o: src/mystrfunctions.c
-	gcc $(CFLAGS) $(PICFLAGS) -c src/mystrfunctions.c -o obj/mystrfunctions.o
+	$(CC) $(CFLAGS) -c src/mystrfunctions.c -o obj/mystrfunctions.o
 
 obj/myfilefunctions.o: src/myfilefunctions.c
-	gcc $(CFLAGS) $(PICFLAGS) -c src/myfilefunctions.c -o obj/myfilefunctions.o
+	$(CC) $(CFLAGS) -c src/myfilefunctions.c -o obj/myfilefunctions.o
 
-$(DYNAMIC_TARGET): src/main.c $(SHARED_LIB)
-	gcc $(CFLAGS) src/main.c -Llib -lmyutils -o $(DYNAMIC_TARGET)
+install: all
+	mkdir -p $(BINDIR)
+	mkdir -p $(MANDIR)
+	cp $(TARGET) $(BINDIR)/client
+	cp man/man3/*.3 $(MANDIR)/
+
+clean:
+	rm -f $(OBJ) $(TARGET)

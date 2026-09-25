@@ -1,0 +1,26 @@
+.TH MYGREP 3 "September 2026" "libmyutils" "Library Functions"
+
+.SH NAME
+mygrep \- search for lines containing a string
+
+.SH SYNOPSIS
+.B #include "../include/myfilefunctions.h"
+.sp
+.B int mygrep(FILE *fp, const char *search_str, char ***matches);
+
+.SH DESCRIPTION
+The
+.B mygrep
+function searches the file associated with
+.B fp
+for lines containing the string specified by
+.B search_str.
+
+Matching lines are stored in the
+.B matches
+array.
+
+The function returns the number of matching lines and returns -1 on failure.
+
+.SH AUTHOR
+LAIBA
